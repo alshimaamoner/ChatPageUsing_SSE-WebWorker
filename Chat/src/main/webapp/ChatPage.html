@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html style="background-color: rosybrown">
+
+<head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+
+
+<script src=http://code.jquery.com/jquery-latest.min.js></script>
+<script>
+
+function sse() {
+    if (typeof (EventSource) !== "undefined") {
+        var source = new EventSource("ChatServlet");
+        source.onmessage = function (event) {
+            $("table").empty();
+            var jsonParser = JSON.parse(event.data);
+
+            $(jsonParser).each(function (idx, obj) {
+                var content = '<tr><td>' + obj.sender + ':' + '<br>' + obj.text + '</td></tr>';
+
+                $('table').append(content);
+            });
+        };
+    } else {
+        document.getElementById("table").innerHTML = "Sorry, your browser does not support server-sent events...";
+    }
+}
+
+
+
+
+
+    $(document).ready(function () {
+        $("#SubmitButton").click(function () {
+            var sender = $("#sender").val();
+            var text = $("#text").val();
+
+
+            /*
+                        $.post("JSONServlet",
+                            {"sender": name, "text": message}
+                            , ajaxCallBack);
+
+                    });*/
+            $.post("ChatServlet",
+                {"sender": sender, "text": text}
+            );
+
+        });
+    });
+
+
+
+
+</script>
+
+
+<body  onload="setInterval(sse(),5)">
+<div>
+    <center style="color: wheat"><h1> Chat  </h1></center>
+
+
+    <form method = "POST" name ="ajax" action = "onmessage" >
+        <label for="sender"  style="color: wheat">Name:</label>
+        <input type="text" id="sender" name="name" required><br><br>
+        <label for="text"  style="color: wheat">Message:</label>
+        <input type="text" id="text" name="msg" required><br><br>
+        <input type = "button" value = "Submit" id="SubmitButton">
+    </form>
+
+
+    <table bgcolor="#fff" style="color: black" width="50%">
+    </table>
+
+
+    <div id="div1">
+    </div>
+
+</div>
+
+
+
+</body>
+</html>
